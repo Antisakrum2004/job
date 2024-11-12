@@ -1,6 +1,107 @@
-# Writing the second part with the remaining questions and closing tags
 
-expanded_html_part2 = """
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оценка условий работы с графиком</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: space-between; padding: 20px; }
+        .criteria { width: 50%; }
+        .criteria label { font-weight: bold; display: block; margin-top: 15px; }
+        .criteria input { margin-right: 5px; }
+        .criteria .options { margin-left: 15px; }
+        .btn-red { color: #ff4c4c; font-weight: bold; }
+        .btn-yellow { color: #ffc107; font-weight: bold; }
+        .btn-green { color: #4caf50; font-weight: bold; }
+        #result-container { display: flex; flex-direction: column; align-items: center; }
+        .result { width: 100%; padding: 20px; border-radius: 8px; font-weight: bold; font-size: 1.2em; text-align: center; margin-top: 20px; }
+        .result.bad { background-color: #ffdddd; color: #b30000; }
+        .result.ok { background-color: #fff8d6; color: #b38f00; }
+        .result.good { background-color: #e6ffcc; color: #336600; }
+    </style>
+    <script>
+        let greenCount = 0, yellowCount = 0, redCount = 0;
+
+        function analyze() {
+            greenCount = yellowCount = redCount = 0;
+            let score = 0;
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                if (input.checked) {
+                    if (input.classList.contains('btn-green')) { score++; greenCount++; }
+                    else if (input.classList.contains('btn-red')) { score--; redCount++; }
+                    else yellowCount++;
+                }
+            });
+            updateChart();
+            const result = document.getElementById("result");
+            result.textContent = score > 1 ? "Хорошо, можно работать."
+                              : score <= 0 ? "Нужно срочно сменить работу." 
+                              : "Терпимо, но можно работать.";
+            result.className = "result " + (score > 1 ? "good" : score <= 0 ? "bad" : "ok");
+        }
+
+        function updateChart() {
+            chart.data.datasets[0].data = [greenCount, yellowCount, redCount];
+            chart.update();
+        }
+
+        window.onload = function() {
+            const ctx = document.getElementById('chart').getContext('2d');
+            window.chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Зеленые', 'Желтые', 'Красные'],
+                    datasets: [{ data: [greenCount, yellowCount, redCount], backgroundColor: ['#4caf50', '#ffc107', '#ff4c4c'] }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<div class="criteria">
+
+    <h1>Оценка условий работы</h1>
+
+    <label>Доход:</label>
+    <div class="options">
+        <input type="radio" name="income" class="btn-green" onclick="analyze()"> Больше 100,000 руб<br>
+        <input type="radio" name="income" class="btn-yellow" onclick="analyze()"> 50,000 - 80,000 руб<br>
+        <input type="radio" name="income" class="btn-red" onclick="analyze()"> Меньше 50,000 руб
+    </div>
+
+    <label>Отношение руководства к работе:</label>
+    <div class="options">
+        <input type="radio" name="leadership" class="btn-green" onclick="analyze()"> Всегда хвалят и помогают<br>
+        <input type="radio" name="leadership" class="btn-yellow" onclick="analyze()"> Не хвалят, но и не хейтят<br>
+        <input type="radio" name="leadership" class="btn-red" onclick="analyze()"> Всё делаешь не так и не то
+    </div>
+
+    <label>Коллектив:</label>
+    <div class="options">
+        <input type="radio" name="team" class="btn-green" onclick="analyze()"> Дружный<br>
+        <input type="radio" name="team" class="btn-yellow" onclick="analyze()"> Нейтральный<br>
+        <input type="radio" name="team" class="btn-red" onclick="analyze()"> Токсичный
+    </div>
+
+    <label>Удаленность от дома:</label>
+    <div class="options">
+        <input type="radio" name="distance" class="btn-green" onclick="analyze()"> 10-30 мин<br>
+        <input type="radio" name="distance" class="btn-yellow" onclick="analyze()"> 30-60 мин<br>
+        <input type="radio" name="distance" class="btn-red" onclick="analyze()"> 60-90 мин
+    </div>
+
+    <label>Парковка:</label>
+    <div class="options">
+        <input type="radio" name="parking" class="btn-green" onclick="analyze()"> Бесплатная и удобная<br>
+        <input type="radio" name="parking" class="btn-yellow" onclick="analyze()"> Есть, но неудобная<br>
+        <input type="radio" name="parking" class="btn-red" onclick="analyze()"> Нет или платная
+    </div>
+
+
     <label>Режим работы:</label>
     <div class="options">
         <input type="radio" name="work_hours" class="btn-green" onclick="analyze()"> До 8 часов<br>
@@ -94,10 +195,3 @@ expanded_html_part2 = """
 
 </body>
 </html>
-"""
-
-# Appending the second part to the expanded HTML file
-with open(expanded_file_path, "a", encoding="utf-8") as file:
-    file.write(expanded_html_part2)
-
-expanded_file_path
